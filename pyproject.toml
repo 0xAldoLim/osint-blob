@@ -9,7 +9,7 @@ description = "Classify mystery OSINT/CTF blobs into candidate URL templates (Pa
 readme = "README.md"
 requires-python = ">=3.9"
 license = { file = "LICENSE" }
-authors = [{ name = "Your Name" }]
+authors = [{ name = "Aldo Lim" }]
 keywords = ["osint", "ctf", "url", "classifier", "pastebin", "imgur"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -33,8 +33,8 @@ check = ["requests>=2.25"]
 blob = "osint_blob.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/YOUR_USERNAME/osint-blob"
-Issues = "https://github.com/YOUR_USERNAME/osint-blob/issues"
+Homepage = "https://github.com/0xAldoLim/osint-blob"
+Issues = "https://github.com/0xAldoLim/osint-blob/issues"
 
 [tool.setuptools.packages.find]
 include = ["osint_blob*"]

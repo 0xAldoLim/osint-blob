@@ -31,7 +31,7 @@ Given a blob, the tool:
 ### From source (recommended for now)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/osint-blob.git
+git clone https://github.com/0xAldoLim/osint-blob.git
 cd osint-blob
 pip install .
 ```
