@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "osint-blob"
+version = "0.1.0"
+description = "Classify mystery OSINT/CTF blobs into candidate URL templates (Pastebin, Imgur, YouTube, GDrive, GitHub, etc.)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "Your Name" }]
+keywords = ["osint", "ctf", "url", "classifier", "pastebin", "imgur"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+]
+dependencies = []
+
+[project.optional-dependencies]
+check = ["requests>=2.25"]
+
+[project.scripts]
+blob = "osint_blob.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/YOUR_USERNAME/osint-blob"
+Issues = "https://github.com/YOUR_USERNAME/osint-blob/issues"
+
+[tool.setuptools.packages.find]
+include = ["osint_blob*"]
