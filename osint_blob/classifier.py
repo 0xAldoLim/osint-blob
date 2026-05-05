@@ -316,21 +316,23 @@ RULES: list[Rule] = [
 
     # --- Cloud / docs ---
     Rule(
-        service="Google Drive (file)",
+        service="Google Drive (file/folder)",
         fits=lambda b, s: 25 <= s.length <= 44 and s.is_url_safe,
         templates=[
             "https://drive.google.com/file/d/{b}/view",
+            "https://drive.google.com/drive/folders/{b}",
         ],
-        note="Google Drive file IDs are 25-44 chars, [A-Za-z0-9_-].",
+        note="Google Drive file/folder IDs are 25-44 chars, [A-Za-z0-9_-].",
     ),
     Rule(
-        service="Google Docs",
+        service="Google Docs / Sheets / Slides",
         fits=lambda b, s: 25 <= s.length <= 60 and s.is_url_safe,
         templates=[
             "https://docs.google.com/document/d/{b}/edit",
             "https://docs.google.com/spreadsheets/d/{b}/edit",
+            "https://docs.google.com/presentation/d/{b}/edit",
         ],
-        note="Google Docs/Sheets IDs are 25-60 chars, [A-Za-z0-9_-].",
+        note="Google Docs/Sheets/Slides IDs are 25-60 chars, [A-Za-z0-9_-].",
     ),
 
     # --- Code / video ---
@@ -378,15 +380,190 @@ RULES: list[Rule] = [
         note="JSFiddle slugs are short alphanumeric.",
     ),
 
+    # --- YouTube extras ---
+    Rule(
+        service="YouTube channel",
+        fits=lambda b, s: s.length == 24 and b.startswith("UC") and bool(re.fullmatch(r"UC[A-Za-z0-9_-]{22}", b)),
+        templates=[
+            "https://www.youtube.com/channel/{b}",
+        ],
+        note="YouTube channel IDs are 24 chars: 'UC' + 22 chars [A-Za-z0-9_-].",
+    ),
+    Rule(
+        service="YouTube playlist",
+        fits=lambda b, s: bool(re.fullmatch(r"(PL|UU|FL|RD|OL|LL|HC)[A-Za-z0-9_-]{10,40}", b)),
+        templates=[
+            "https://www.youtube.com/playlist?list={b}",
+        ],
+        note="YouTube playlist IDs start with PL/UU/FL/RD/OL/LL/HC and are typically 34 chars.",
+    ),
+    Rule(
+        service="YouTube handle (@)",
+        fits=lambda b, s: 3 <= s.length <= 30 and bool(re.fullmatch(r"[A-Za-z0-9_][A-Za-z0-9._-]*[A-Za-z0-9_-]", b)),
+        templates=[
+            "https://www.youtube.com/@{b}",
+        ],
+        note="YouTube handles are 3-30 chars, [A-Za-z0-9._-], no leading/trailing period.",
+    ),
+
+    # --- Discord ---
+    Rule(
+        service="Discord invite",
+        fits=lambda b, s: 7 <= s.length <= 10 and s.is_alnum,
+        templates=[
+            "https://discord.gg/{b}",
+            "https://discord.com/invite/{b}",
+        ],
+        note="Discord invite codes are 7-8 chars (temporary) or 10 chars (permanent), [A-Za-z0-9].",
+    ),
+    Rule(
+        service="Discord vanity invite",
+        fits=lambda b, s: 2 <= s.length <= 32 and bool(re.fullmatch(r"[a-z0-9-]+", b)),
+        templates=[
+            "https://discord.gg/{b}",
+            "https://discord.com/invite/{b}",
+        ],
+        note="Discord vanity invites are 2-32 chars, lowercase letters, digits, and hyphens.",
+    ),
+
+    # --- Reddit ---
+    Rule(
+        service="Reddit user",
+        fits=lambda b, s: 3 <= s.length <= 20 and bool(re.fullmatch(r"[A-Za-z0-9_-]+", b)),
+        templates=[
+            "https://www.reddit.com/user/{b}",
+        ],
+        note="Reddit usernames are 3-20 chars, [A-Za-z0-9_-].",
+    ),
+    Rule(
+        service="Subreddit",
+        fits=lambda b, s: 3 <= s.length <= 21 and bool(re.fullmatch(r"[A-Za-z0-9_]+", b)),
+        templates=[
+            "https://www.reddit.com/r/{b}",
+        ],
+        note="Subreddit names are 3-21 chars, alphanumeric + underscore only.",
+    ),
+    Rule(
+        service="Reddit submission (redd.it)",
+        fits=lambda b, s: 5 <= s.length <= 8 and s.is_lower_alnum,
+        templates=[
+            "https://redd.it/{b}",
+        ],
+        note="Reddit submission IDs are short base36 (lowercase alnum), typically 5-8 chars.",
+    ),
+
+    # --- Social ---
+    Rule(
+        service="Instagram user",
+        fits=lambda b, s: 1 <= s.length <= 30 and bool(re.fullmatch(r"[A-Za-z0-9_](?:[A-Za-z0-9._]*[A-Za-z0-9_])?", b)) and ".." not in b,
+        templates=[
+            "https://www.instagram.com/{b}",
+        ],
+        note="Instagram usernames are 1-30 chars, [A-Za-z0-9._], no leading/trailing period, no '..'.",
+    ),
+    Rule(
+        service="TikTok user",
+        fits=lambda b, s: 2 <= s.length <= 24 and bool(re.fullmatch(r"[A-Za-z0-9_](?:[A-Za-z0-9._]*[A-Za-z0-9_])?", b)),
+        templates=[
+            "https://www.tiktok.com/@{b}",
+        ],
+        note="TikTok usernames are 2-24 chars, [A-Za-z0-9._], no leading/trailing period.",
+    ),
+    Rule(
+        service="Linktree",
+        fits=lambda b, s: 2 <= s.length <= 30 and bool(re.fullmatch(r"[a-z0-9_-]+", b)),
+        templates=[
+            "https://linktr.ee/{b}",
+        ],
+        note="Linktree slugs are lowercase alnum + underscores/dashes (no public spec; permissive).",
+    ),
+    Rule(
+        service="Beacons.ai",
+        fits=lambda b, s: 1 <= s.length <= 30 and bool(re.fullmatch(r"[a-z0-9._-]+", b)),
+        templates=[
+            "https://beacons.ai/{b}",
+        ],
+        note="Beacons.ai slugs are lowercase alnum + ._- (no public spec; permissive).",
+    ),
+    Rule(
+        service="Carrd",
+        fits=lambda b, s: 1 <= s.length <= 63 and bool(re.fullmatch(r"[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", b)),
+        templates=[
+            "https://{b}.carrd.co",
+        ],
+        note="Carrd uses subdomain rules: lowercase alnum + dashes, no leading/trailing dash.",
+    ),
+
+    # --- Audio / media ---
+    Rule(
+        service="Spotify (user/playlist/track/album)",
+        fits=lambda b, s: s.length == 22 and s.is_alnum,
+        templates=[
+            "https://open.spotify.com/user/{b}",
+            "https://open.spotify.com/playlist/{b}",
+            "https://open.spotify.com/track/{b}",
+            "https://open.spotify.com/album/{b}",
+            "https://open.spotify.com/artist/{b}",
+        ],
+        note="Spotify IDs are exactly 22 chars, base62 ([A-Za-z0-9]).",
+    ),
+    Rule(
+        service="SoundCloud user",
+        fits=lambda b, s: 3 <= s.length <= 25 and bool(re.fullmatch(r"[a-z0-9_-]+", b)),
+        templates=[
+            "https://soundcloud.com/{b}",
+        ],
+        note="SoundCloud user slugs are 3-25 lowercase alnum + dashes/underscores.",
+    ),
+    Rule(
+        service="Mixcloud user",
+        fits=lambda b, s: 3 <= s.length <= 25 and bool(re.fullmatch(r"[a-z0-9_-]+", b)),
+        templates=[
+            "https://www.mixcloud.com/{b}/",
+        ],
+        note="Mixcloud user slugs are 3-25 lowercase alnum + dashes/underscores.",
+    ),
+
+    # --- Docs / boards ---
+    Rule(
+        service="Notion page",
+        fits=lambda b, s: (
+            (s.length == 32 and s.is_hex)
+            or bool(re.fullmatch(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", b))
+        ),
+        templates=[
+            "https://www.notion.so/{b}",
+        ],
+        note="Notion page IDs are 32 hex chars, optionally formatted as a UUID (8-4-4-4-12).",
+    ),
+    Rule(
+        service="Trello board",
+        fits=lambda b, s: s.length == 8 and s.is_alnum,
+        templates=[
+            "https://trello.com/b/{b}",
+        ],
+        note="Trello board shortlinks are 8 alphanumeric chars.",
+    ),
+    Rule(
+        service="Trello card",
+        fits=lambda b, s: s.length == 8 and s.is_alnum,
+        templates=[
+            "https://trello.com/c/{b}",
+        ],
+        note="Trello card shortlinks are 8 alphanumeric chars.",
+    ),
+
     # --- Static hosting ---
     Rule(
-        service="GitHub Pages / Netlify / Vercel",
+        service="Static hosting (GitHub Pages / Netlify / Vercel / Firebase / etc.)",
         fits=lambda b, s: 1 <= s.length <= 63 and bool(re.fullmatch(r"[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", b)),
         templates=[
             "https://{b}.github.io",
             "https://{b}.netlify.app",
             "https://{b}.vercel.app",
             "https://{b}.pages.dev",
+            "https://{b}.web.app",
+            "https://{b}.firebaseapp.com",
             "https://{b}.neocities.org",
         ],
         note="Subdomain rules: lowercase alnum + dashes, no leading/trailing dash, max 63 chars.",
